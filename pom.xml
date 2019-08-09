@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>github.1510460325</groupId>
+    <groupId>com.github.1510460325</groupId>
     <artifactId>verify-utils</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -12,18 +12,18 @@
     <properties>
         <java.version>1.8</java.version>
     </properties>
+
     <distributionManagement>
         <repository>
-            <id>jfrog-releases</id>
-            <name>artifactory-releases</name>
-            <url>https://artifactory.gz.cvte.cn:443/artifactory/SR_maven_releases_local/</url>
+            <id>snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
         <snapshotRepository>
-            <id>jfrog-snapshots</id>
-            <name>artifactory-snapshots</name>
-            <url>https://artifactory.gz.cvte.cn:443/artifactory/SR_maven_snapshots_local</url>
+            <id>snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
