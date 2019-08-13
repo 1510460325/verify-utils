@@ -1,5 +1,25 @@
 ## 参数校验工具包
-工具说明：参数校验插件，注解式的标记参数的限制（为空、参数长度、取值范围）
+工具说明：参数校验插件，注解式的标记参数的限制（为空、参数长度、取值范围），可以代替很多冗杂的if判断，比如：
+~~~
+    public void hello(String host, User user) {
+		if (host == null || host.length() == 0) {
+			throw new IllegalArgumentException("host can't be empty");
+		}
+		if (user == null || user.getFullName() == null || user.getFullName().length() == 0) {
+			throw new IllegalArgumentException("user.fullName can't be empty");
+		}
+		System.out.println("====SUCCESS====");
+    }
+~~~
+可以使用插件优化代码，增强可读性：
+~~~
+	@Verify(
+		notNull = {"host", "user.fullName"}
+	)
+	public void hello(String host, User user) {
+		System.out.println("====SUCCESS====");
+	}
+~~~
 ### 使用示例
 #### 1.添加依赖
 ~~~
