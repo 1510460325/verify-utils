@@ -27,36 +27,33 @@ public class VerifyAspect {
 
     static {
         if (LOGGER.isDebugEnabled()) {
-            System.err.println(" ┏┓　　　┏┓\n" +
-                    " ┏┛┻━━━┛┻┓\n" +
-                    " ┃　　　━　　　┃\n" +
-                    " ┃　┳┛　┗┳　┃\n" +
-                    " ┃　　　┻　　　┃\n" +
-                    " ┗━┓　　　┏━┛\n" +
-                    " ┃　　　┃ 神兽温馨提示：　　　　　　　　\n" +
-                    " ┃　　　┃     参数判断不到位，测试小妹两行泪！\n" +
-                    " ┃　　　┗━━━┓\n" +
-                    " ┃　　　　　　　┣┓\n" +
-                    " ┃　　　　　　　┏┛\n" +
-                    " ┗┓┓┏━┳┓┏┛\n" +
-                    " ┃┫┫　┃┫┫\n" +
-                    " ┗┻┛　┗┻┛\n" +
-                    "  我是参数校验插件自带坐骑\n" +
-                    "  我只会在项目dubug模式初始化的时候出来");
+            System.err.println(
+            	"      ┏┛ ┻━━━━━┛ ┻┓\n" +
+				"      ┃　　　━　　 ┃\n" +
+				"      ┃　┳┛　  ┗┳　┃\n" +
+				"      ┃　　　　　　┃\n" +
+				"      ┃　　　┻　　 ┃\n" +
+				"      ┗━┓　　　┏━━┛\n" +
+				"        ┃　　　┃   \n" +
+				"        ┃　　　┃   no bug!\n" +
+				"        ┃　　　┗━━━━━━━━━┓\n" +
+				"        ┃　verify-utils  ┣┓\n" +
+				"        ┃　　　　        ┏┛\n" +
+				"        ┗━┓ ┓ ┏━━━┳ ┓ ┏━┛\n" +
+				"          ┃ ┫ ┫   ┃ ┫ ┫\n" +
+				"          ┗━┻━┛   ┗━┻━┛");
         }
     }
 
     @Before("@annotation(verify)")
     public void verify(JoinPoint joinPoint, Verify verify) {
-        //所有的参数和参数名
         Object[] values = joinPoint.getArgs();
         if (values.length == 0) {
             return;
         }
         String[] names = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
-        //未开启mvn保留方法名配置
         if (names == null) {
-            throw new IllegalArgumentException("此插件基于cglib代理，请设置代理为cglib代理\n" +
+            throw new IllegalArgumentException("This plug-in is based on cglib proxy. Please set the proxy to cglib proxy.\n" +
                     "<aop:aspectj-autoproxy proxy-target-class=\"true\"/>");
         }
         JSONObject data = new JSONObject();
@@ -91,7 +88,7 @@ public class VerifyAspect {
     }
 
     /**
-     * 所有都不能为空
+     * all not be null
      *
      * @param notBlank
      * @param values
@@ -101,18 +98,18 @@ public class VerifyAspect {
         if (notBlank.length == 1 && notBlank[0].trim().equals("*")) {
             for (int i = 0; i < values.length; i++) {
                 if (values[i] == null) {
-                    throw new IllegalArgumentException(names[i] + "不能为空");
+                    throw new IllegalArgumentException(names[i] + " Can't be empty");
                 }
                 if (values[i] instanceof String && !isNotBlank((String) values[i])) {
-                    throw new IllegalArgumentException(names[i] + "不能为空");
+                    throw new IllegalArgumentException(names[i] + " Can't be empty");
                 }
                 if (values[i] instanceof Collection) {
                     Collection<?> val = ((Collection) values[i]);
                     for (Object obj : val) {
                         if (obj == null) {
-                            throw new IllegalArgumentException(names[i] + " 元素不能为空");
+                            throw new IllegalArgumentException(names[i] + " Elements cannot be empty");
                         } else if (obj instanceof String && !isNotBlank((String) obj)) {
-                            throw new IllegalArgumentException(names[i] + " 元素不能为空");
+                            throw new IllegalArgumentException(names[i] + " Elements cannot be empty");
                         }
                     }
                 }
@@ -123,7 +120,7 @@ public class VerifyAspect {
     }
 
     /**
-     * 检查数字是否合法
+     * number limit
      *
      * @param limit
      * @param data
@@ -131,14 +128,14 @@ public class VerifyAspect {
     private void checkNumberLimit(SizeLimit limit, JSONObject data) {
         Object value = valueOfPattern(limit.name, data);
         if (value == null) {
-            throw new IllegalArgumentException(limit.name + "不能为空");
+            throw new IllegalArgumentException(limit.name + " Can't be empty");
         }
         if (value instanceof Integer) {
             Integer val = ((Integer) value);
             Integer low = new Integer(limit.low);
             Integer high = new Integer(limit.high);
             if (low > val || high < val) {
-                throw new IllegalArgumentException(String.format("%s 取值越界,%s不在[%s,%s]内",
+                throw new IllegalArgumentException(String.format("%s The value crosses the boundary and %s is not in [%s,%s]",
                         limit.name, val, limit.low, limit.high));
             }
         } else if (value instanceof BigDecimal) {
@@ -146,7 +143,7 @@ public class VerifyAspect {
             BigDecimal low = new BigDecimal(limit.low);
             BigDecimal high = new BigDecimal(limit.high);
             if (low.compareTo(val) > 0 || high.compareTo(val) < 0) {
-                throw new IllegalArgumentException(String.format("%s 取值越界,%s不在[%s,%s]内",
+                throw new IllegalArgumentException(String.format("%s The value crosses the boundary and %s is not in [%s,%s]",
                         limit.name, val, limit.low, limit.high));
             }
         }
@@ -154,30 +151,30 @@ public class VerifyAspect {
 
 
     /**
-     * 验证正则表达式
+     * reg limit
      *
      * @param pattern
      */
     private void checkRegex(String pattern, JSONObject data) {
         String[] param = pattern.split("=>");
         if (param.length != 2) {
-            throw new IllegalArgumentException(pattern + " 配置有误");
+            throw new IllegalArgumentException(pattern + " Misconfiguration");
         } else {
             Object value = valueOfPattern(param[0], data);
             if (value == null) {
-                throw new IllegalArgumentException(pattern + " 不能为空");
+                throw new IllegalArgumentException(pattern + " Can't be empty");
             } else if (!(value instanceof String)) {
-                throw new IllegalArgumentException(String.format("参数%s不是字符串", param[0]));
+                throw new IllegalArgumentException(String.format("The parameter %s is not a string", param[0]));
             }
             String val = ((String) value);
             if (!Pattern.matches(param[1], val)) {
-                throw new IllegalArgumentException(String.format("参数%s不符合正则语法:%s", param[0], param[1]));
+                throw new IllegalArgumentException(String.format("The parameter %s does not conform to the regular grammar:%s", param[0], param[1]));
             }
         }
     }
 
     /**
-     * 验证长度是否满足条件
+     * length limit
      *
      * @param limit
      * @param data
@@ -185,25 +182,25 @@ public class VerifyAspect {
     private void checkSize(SizeLimit limit, JSONObject data) {
         Object value = valueOfPattern(limit.name, data);
         if (value == null) {
-            throw new IllegalArgumentException(limit.name + "不能为空");
+            throw new IllegalArgumentException(limit.name + " Can't be empty");
         }
         if (value instanceof String) {
             String val = (String) value;
             if (!(val.length() >= Integer.valueOf(limit.low) && val.length() <= Integer.valueOf(limit.high))) {
-                throw new IllegalArgumentException(String.format("%s size越界,size:%s不在[%s,%s]内",
+                throw new IllegalArgumentException(String.format("%s crosses the boundary: %s is not in [%s,%s]",
                         limit.name, val.length(), limit.low, limit.high));
             }
         } else if (value instanceof Collection) {
             Collection val = (Collection) value;
             if (!(val.size() >= Integer.valueOf(limit.low) && val.size() <= Integer.valueOf(limit.high))) {
-                throw new IllegalArgumentException(String.format("%s size越界,size:%s不在[%s,%s]内",
+                throw new IllegalArgumentException(String.format("%s crosses the boundary: %s is not in [%s,%s]",
                         limit.name, val.size(), limit.low, limit.high));
             }
         }
     }
 
     /**
-     * 从json中获取参数值
+     * get data from json
      *
      * @param pattern
      * @param data
@@ -229,7 +226,7 @@ public class VerifyAspect {
     }
 
     /**
-     * 压缩字符串
+     * trim the string
      *
      * @param str
      * @return
@@ -242,7 +239,7 @@ public class VerifyAspect {
     }
 
     /**
-     * 检验是否为空
+     * Can't be empty
      *
      * @param pattern
      * @param data
@@ -250,17 +247,17 @@ public class VerifyAspect {
     private void checkNull(String pattern, JSONObject data) {
         Object value = valueOfPattern(pattern, data);
         if (value == null) {
-            throw new IllegalArgumentException(pattern + " 不能为空");
+            throw new IllegalArgumentException(pattern + " Can't be empty");
         } else if (value instanceof String && !isNotBlank((String) value)) {
-            throw new IllegalArgumentException(pattern + " 不能为空");
+            throw new IllegalArgumentException(pattern + " Can't be empty");
         }
         if (value instanceof Collection) {
             Collection<?> val = ((Collection) value);
             for (Object obj : val) {
                 if (obj == null) {
-                    throw new IllegalArgumentException(pattern + " 元素不能为空");
+                    throw new IllegalArgumentException(pattern + " Elements cannot be empty");
                 } else if (obj instanceof String && !isNotBlank((String) obj)) {
-                    throw new IllegalArgumentException(pattern + " 元素不能为空");
+                    throw new IllegalArgumentException(pattern + " Elements cannot be empty");
                 }
             }
         }
@@ -271,7 +268,7 @@ public class VerifyAspect {
     }
 
     /**
-     * 获取参数的长度限制配置
+     * parameters size limit
      *
      * @param pattern
      * @return
@@ -280,13 +277,13 @@ public class VerifyAspect {
         SizeLimit res = new SizeLimit();
         int middle = pattern.indexOf("[");
         if (middle == -1) {
-            throw new IllegalArgumentException(pattern + " 配置有误");
+            throw new IllegalArgumentException(pattern + " Misconfiguration");
         }
         res.name = pattern.substring(0, middle);
 
         int index = pattern.indexOf(",");
         if (index == -1) {
-            throw new IllegalArgumentException(pattern + " 配置有误");
+            throw new IllegalArgumentException(pattern + " Misconfiguration");
         }
         res.low = pattern.substring(middle + 1, index);
         res.high = pattern.substring(index + 1, pattern.length() - 1);
