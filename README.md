@@ -4,9 +4,9 @@
 #### 1.添加依赖
 ~~~
 <dependency>
-    <groupId>github.1510460325</groupId>
+    <groupId>com.github.1510460325</groupId>
     <artifactId>verify-utils</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 </dependency>
 ~~~
 #### 项目中导入开关：@EnableVerify
